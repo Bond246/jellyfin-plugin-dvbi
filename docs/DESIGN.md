@@ -113,7 +113,10 @@ with on-demand offers, More Episodes with pagination (links are only followed to
   TVHeadend reports 65536 for unknown) **plus a word-level name check**. On mismatch the internet stream is
   used and the conflict is logged and shown on the settings page (seen during development: ZDFinfo and
   zdf_neo with swapped DVB-T service ids in a service list).
-- TVHeadend API (tested 4.3, API 20): `api/mpegts/mux/grid`, `api/mpegts/service/grid`, `api/serverinfo`.
+- TVHeadend API (tested 4.3, API 20): `api/mpegts/mux/grid`, `api/mpegts/service/grid` (both
+  `ACCESS_ADMIN` in TVHeadend, so the configured user needs admin rights), `api/serverinfo`;
+  `/playlist` and `/stream` with tickets. The connection test reports 401 (credentials) and 403
+  (missing rights) explicitly.
 - Own Digest handler (RFC 7616, MD5): TVHeadend rejects .NET's built-in Digest implementation.
 - Streams via channel tickets (`playlist/ticket/channel/{uuid}`), so no credentials appear in the ffmpeg
   command lines Jellyfin logs (tickets are short-lived). Services without a TVHeadend channel cannot be used.
@@ -132,10 +135,12 @@ with on-demand offers, More Episodes with pagination (links are only followed to
 - The client API is available to every signed-in user; it exposes public stream and metadata URLs only.
 - The only anonymous endpoint is the DASH manifest proxy (random per-stream token, idle timeout).
 - The TVHeadend password is stored encrypted (`SecretProtector`: AES-256-GCM, random key in
-  `secret.key` in the plugin data folder) and only ever leaves the server encrypted – the configuration page
+  `plugins/configurations/Jellyfin.Plugin.DvbI.key` – next to the configuration, because the plugin data
+  folder is removed on uninstall and a lost key makes the password unreadable) and only ever leaves the server encrypted – the configuration page
   shows "stored" and keeps the value unless a new password is typed; "take over from TVHeadend plugin" also
-  returns it encrypted. Plain text passwords of older configurations are encrypted at start-up. This
-  protects configuration files, backups and the UI, not against full file access to the server.
+  returns it encrypted. Plain text passwords of older configurations are encrypted at start-up; an
+  undecryptable password is reported in the log and on the connection test. This keeps the password out of
+  the configuration file and the UI, not away from someone with access to the configuration folder.
 
 ## Observations from German DVB-I data (2026)
 

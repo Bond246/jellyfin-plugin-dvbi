@@ -104,6 +104,11 @@ public class TvheadendController : ControllerBase
             return BadRequest("Invalid TVHeadend URL");
         }
 
+        if (tvhSettings.PasswordUnreadable)
+        {
+            return BadRequest("The stored TVHeadend password cannot be decrypted, please enter it again");
+        }
+
         try
         {
             var (version, apiVersion) = await _tvh.GetServerInfoAsync(tvhSettings, cancellationToken).ConfigureAwait(false);
@@ -116,9 +121,17 @@ public class TvheadendController : ControllerBase
 
             return Ok(new TvheadendTestResultDto(version, apiVersion, services.Count, lists));
         }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Problem("TVHeadend rejected the user name or password.", statusCode: StatusCodes.Status502BadGateway);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+        {
+            return Problem("The TVHeadend user lacks permissions (web interface/admin access to read services, streaming).", statusCode: StatusCodes.Status502BadGateway);
+        }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException && !cancellationToken.IsCancellationRequested)
         {
-            return Problem(ex.Message, statusCode: StatusCodes.Status502BadGateway);
+            return Problem("TVHeadend is not reachable or answered unexpectedly: " + ex.Message, statusCode: StatusCodes.Status502BadGateway);
         }
     }
 

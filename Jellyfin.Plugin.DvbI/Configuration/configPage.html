@@ -504,8 +504,23 @@
                             }
                         });
                         box.innerHTML = html;
-                    }, function () {
-                        box.innerHTML = '<span class="dvbi-error">' + esc(t.TvheadendUrl) + ' ✗</span>';
+                    }, function (response) {
+                        // Show the reason the server reports (wrong password, missing rights, not reachable).
+                        var show = function (reason) {
+                            box.innerHTML = '<span class="dvbi-error">' + esc(t.TvheadendUrl) + ' ✗ ' + esc(reason || '') + '</span>';
+                        };
+                        if (response && typeof response.text === 'function') {
+                            response.text().then(function (text) {
+                                try {
+                                    var body = JSON.parse(text);
+                                    show(typeof body === 'string' ? body : (body.detail || body.title || text));
+                                } catch (e) {
+                                    show(text);
+                                }
+                            }, function () { show(''); });
+                        } else {
+                            show('');
+                        }
                     });
                 });
 

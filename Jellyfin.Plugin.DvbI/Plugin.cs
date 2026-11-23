@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using Jellyfin.Plugin.DvbI.Configuration;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
@@ -38,6 +39,12 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     /// Gets the current plugin instance.
     /// </summary>
     public static Plugin? Instance { get; private set; }
+
+    /// <summary>
+    /// Gets the key file for <see cref="SecretProtector"/>. It lives next to the plugin configuration, so it
+    /// survives uninstalling and reinstalling the plugin just like the (encrypted) configuration does.
+    /// </summary>
+    internal string SecretKeyFile => Path.Combine(ApplicationPaths.PluginConfigurationsPath, "Jellyfin.Plugin.DvbI.key");
 
     /// <summary>
     /// Saves the configuration; a newly entered TVHeadend password is encrypted before it is stored.

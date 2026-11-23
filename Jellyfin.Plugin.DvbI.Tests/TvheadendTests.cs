@@ -221,19 +221,19 @@ public sealed class SecretProtectorTests : IDisposable
     [Fact]
     public void Protect_RoundTripsAndHidesPlainText()
     {
-        var protector = new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(_dir);
+        var protector = new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(Path.Combine(_dir, "test.key"));
         var stored = protector.Protect("s3cret!");
         Assert.True(Jellyfin.Plugin.DvbI.Configuration.SecretProtector.IsProtected(stored));
         Assert.DoesNotContain("s3cret", stored, StringComparison.Ordinal);
         Assert.NotEqual(stored, protector.Protect("s3cret!"));
         Assert.Equal("s3cret!", protector.Unprotect(stored));
-        Assert.Equal("s3cret!", new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(_dir).Unprotect(stored));
+        Assert.Equal("s3cret!", new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(Path.Combine(_dir, "test.key")).Unprotect(stored));
     }
 
     [Fact]
     public void Protect_KeepsEmptyAndProtectedValues()
     {
-        var protector = new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(_dir);
+        var protector = new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(Path.Combine(_dir, "test.key"));
         Assert.Equal(string.Empty, protector.Protect(string.Empty));
         var stored = protector.Protect("x");
         Assert.Equal(stored, protector.Protect(stored));
@@ -243,12 +243,12 @@ public sealed class SecretProtectorTests : IDisposable
     [Fact]
     public void Unprotect_FailsSafelyWithAnotherKey()
     {
-        var stored = new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(_dir).Protect("x");
+        var stored = new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(Path.Combine(_dir, "test.key")).Protect("x");
         var otherDir = _dir + "-other";
         try
         {
-            Assert.Null(new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(otherDir).Unprotect(stored));
-            Assert.Null(new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(otherDir).Unprotect("enc:v1:not-base64!"));
+            Assert.Null(new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(Path.Combine(otherDir, "test.key")).Unprotect(stored));
+            Assert.Null(new Jellyfin.Plugin.DvbI.Configuration.SecretProtector(Path.Combine(otherDir, "test.key")).Unprotect("enc:v1:not-base64!"));
         }
         finally
         {

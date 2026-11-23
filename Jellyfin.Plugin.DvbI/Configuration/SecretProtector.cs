@@ -7,9 +7,9 @@ namespace Jellyfin.Plugin.DvbI.Configuration;
 
 /// <summary>
 /// Encrypts secrets (the TVHeadend password) for storage in the plugin configuration, so they are neither
-/// readable in the configuration file, in backups nor in the configuration page. AES-256-GCM with a random
-/// key kept in a separate file in the plugin data folder. This does not protect against someone with full
-/// file access to the server, who can read the key as well.
+/// readable in the configuration file nor in the configuration page. AES-256-GCM with a random key kept in a
+/// separate file next to the plugin configuration (it has to survive reinstalling the plugin). This does not
+/// protect against someone with file access to the configuration folder or full access to the server.
 /// </summary>
 public sealed class SecretProtector
 {
@@ -25,16 +25,16 @@ public sealed class SecretProtector
     /// <summary>
     /// Initializes a new instance of the <see cref="SecretProtector"/> class.
     /// </summary>
-    /// <param name="keyDirectory">Folder for the key file.</param>
-    public SecretProtector(string keyDirectory)
+    /// <param name="keyFile">Path of the key file.</param>
+    public SecretProtector(string keyFile)
     {
-        _keyFile = Path.Combine(keyDirectory, "secret.key");
+        _keyFile = keyFile;
     }
 
     /// <summary>
     /// Gets the protector of the running plugin.
     /// </summary>
-    public static SecretProtector Default => new(Plugin.Instance?.DataFolderPath ?? Path.GetTempPath());
+    public static SecretProtector Default => new(Plugin.Instance?.SecretKeyFile ?? Path.Combine(Path.GetTempPath(), "Jellyfin.Plugin.DvbI.key"));
 
     /// <summary>
     /// Returns whether a stored value is encrypted.

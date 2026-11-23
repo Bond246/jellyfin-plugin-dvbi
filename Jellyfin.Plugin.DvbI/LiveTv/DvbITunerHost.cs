@@ -502,6 +502,12 @@ public sealed class DvbITunerHost : ITunerHost, IConfigurableTunerHost
             return null;
         }
 
+        if (settings.PasswordUnreadable)
+        {
+            _logger.LogWarning("The stored TVHeadend password cannot be decrypted (key file missing or replaced); enter it again on the DVB-I plugin page. Using internet streams only");
+            return null;
+        }
+
         List<TvhService> services;
         try
         {

@@ -21,7 +21,8 @@ dotnet test                  # xUnit, Jellyfin.Plugin.DvbI.Tests
 JELLYFIN_PLUGIN_DIR=… ./deploy.sh [Debug|Release]  # publish → plugin folder, meta.json, docker restart
 ```
 
-Releases: set `version` (e.g. `1.0.0`) in `build.yaml` and `Directory.Build.props`, push a tag `vX.Y.Z`; `.github/workflows/release.yml` builds,
+Releases: set the four-part plugin version `X.Y.Z.0` in `build.yaml` and `Directory.Build.props` (Jellyfin
+requests plugin images by the four-part version), push a tag `vX.Y.Z`; `.github/workflows/release.yml` builds,
 tests, publishes the zip as GitHub release asset and updates `manifest.json`.
 
 ## Layout (`Jellyfin.Plugin.DvbI/`)

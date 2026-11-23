@@ -21,11 +21,13 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME#v}"
           VERSION=$(grep -oP '^version:\s*"\K[^"]+' build.yaml)
-          if [ "$VERSION" != "$TAG" ]; then
-            echo "Tag $GITHUB_REF_NAME does not match version $VERSION in build.yaml" >&2
+          # Jellyfin plugin versions have four parts (1.0.1.0); tags and zip names use three (v1.0.1).
+          if [ "$VERSION" != "$TAG.0" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match version $VERSION in build.yaml (expected $TAG.0)" >&2
             exit 1
           fi
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "RELEASE=$TAG" >> "$GITHUB_ENV"
 
       - name: Test
         run: dotnet test -c Release
@@ -35,7 +37,7 @@ jobs:
           dotnet publish Jellyfin.Plugin.DvbI/Jellyfin.Plugin.DvbI.csproj -c Release -o publish
           mkdir package
           cp publish/Jellyfin.Plugin.DvbI.dll images/logo.png package/
-          ZIP="dvb-i_${VERSION}.zip"
+          ZIP="dvb-i_${RELEASE}.zip"
           (cd package && zip -q "../$ZIP" ./*)
           echo "ZIP=$ZIP" >> "$GITHUB_ENV"
           echo "CHECKSUM=$(md5sum "$ZIP" | cut -d' ' -f1)" >> "$GITHUB_ENV"
@@ -45,7 +47,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           NOTES=$(python3 -c 'import sys; sys.path.insert(0, "tools"); import update_manifest as m; print(m.read_build_yaml("build.yaml").get("changelog", ""))')
-          gh release create "$GITHUB_REF_NAME" "$ZIP" --title "DVB-I $VERSION" --notes "$NOTES"
+          gh release create "$GITHUB_REF_NAME" "$ZIP" --title "DVB-I $RELEASE" --notes "$NOTES"
 
       - name: Add the release to manifest.json
         run: |

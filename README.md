@@ -13,7 +13,7 @@ like any other Live TV source (comparable to an M3U tuner or TVHeadend).
 > environment with German public broadcasters, and comes **without any warranty – use it at your own risk.**
 > Suggestions, bug reports and pull requests are very welcome.
 
-- Version 1.0.0, compatible with **Jellyfin 12.4.0** (.NET 10)
+- Compatible with **Jellyfin 12.4.0** (.NET 10)
 - License: GPL-3.0
 
 ## What it does
@@ -66,7 +66,7 @@ partners or for trials. You need the URL of a **service list registry** (query e
 
 ### Manually
 
-1. Download `dvb-i_<version>.zip` (e.g. `dvb-i_1.0.0.zip`) from the [releases](https://github.com/Bond246/jellyfin-plugin-dvbi/releases).
+1. Download `dvb-i_<version>.zip` (e.g. `dvb-i_1.0.1.zip`) from the [releases](https://github.com/Bond246/jellyfin-plugin-dvbi/releases).
 2. Unpack it into a folder `DVB-I` inside Jellyfin's plugin directory (e.g. `/config/plugins/DVB-I/` in the
    official Docker image).
 3. Restart Jellyfin.
@@ -86,7 +86,8 @@ Everything is configured on **Dashboard → Plugins → DVB-I** (English and Ger
 ### Broadcast via TVHeadend (optional)
 
 Requirements in [TVHeadend](https://tvheadend.org/) (tested with 4.3):
-- a user with streaming rights (HTTP Digest or Basic authentication),
+- a user with **admin rights** and streaming rights (HTTP Digest or Basic authentication) – TVHeadend
+  only lets administrators read the service and multiplex lists that the plugin needs for matching,
 - services mapped to TVHeadend channels (streams are opened with channel tickets, so no credentials appear
   in Jellyfin's logs),
 - reachable from the Jellyfin server via HTTP (default port 9981). In Docker the host name must resolve
@@ -116,9 +117,10 @@ this – the plugin allows it for its tuners.
 - **Browsers** have no DASH player in Jellyfin's web client; Jellyfin delivers all channels as HLS.
 - **Repeats** are not flagged in the guide data seen so far, so "record new episodes only" has no effect.
 - **Credentials**: the TVHeadend password is stored encrypted (AES-GCM) in the plugin configuration and
-  is never sent back to the configuration page. The key is kept in a separate file in the plugin's data
-  folder – this protects configuration files, backups and the web UI, but not against someone with full
-  file access to the server.
+  is never sent back to the configuration page. The key is kept in a separate file next to the plugin
+  configuration (`plugins/configurations/Jellyfin.Plugin.DvbI.key`), so it survives reinstalling the
+  plugin. This keeps the password out of the configuration file and the web UI, but not away from someone
+  with access to the configuration folder. If the key file is lost, enter the password again.
 
 ## Development
 
@@ -137,9 +139,9 @@ JELLYFIN_PLUGIN_DIR=/path/to/jellyfin/config/plugins/DVB-I ./deploy.sh   # deplo
 
 ### Releasing
 
-Set `version` in `build.yaml` and `Directory.Build.props`, then push a tag `vX.Y.Z` with the same
-version. The GitHub workflow builds and tests the plugin, attaches `dvb-i_X.Y.Z.zip` to a GitHub release
-and adds the version to `manifest.json`.
+Set the plugin version `X.Y.Z.0` in `build.yaml` and `Directory.Build.props` (Jellyfin expects four
+parts), then push a tag `vX.Y.Z`. The GitHub workflow builds and tests the plugin, attaches
+`dvb-i_X.Y.Z.zip` to a GitHub release and adds the version to `manifest.json`.
 
 ## Contributing
 

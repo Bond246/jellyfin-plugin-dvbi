@@ -13,6 +13,12 @@ namespace Jellyfin.Plugin.DvbI.Tvheadend;
 internal sealed record TvhSettings(Uri BaseUrl, string Username, string Password, string Profile)
 {
     /// <summary>
+    /// Gets a value indicating whether a stored password could not be decrypted (e.g. the key file was lost);
+    /// the password then has to be entered again.
+    /// </summary>
+    public bool PasswordUnreadable { get; init; }
+
+    /// <summary>
     /// Gets a key identifying the connection (for caches).
     /// </summary>
     public string Key => BaseUrl + "|" + Username + "|" + Password.GetHashCode(StringComparison.Ordinal);
@@ -38,7 +44,13 @@ internal sealed record TvhSettings(Uri BaseUrl, string Username, string Password
     /// <returns>Settings, or null if the URL is empty or invalid.</returns>
     public static TvhSettings? Create(string? url, string? username, string? password, string? profile)
     {
-        password = SecretProtector.IsProtected(password) ? SecretProtector.Default.Unprotect(password) : password;
+        var unreadable = false;
+        if (SecretProtector.IsProtected(password))
+        {
+            password = SecretProtector.Default.Unprotect(password);
+            unreadable = password is null;
+        }
+
         var text = url?.Trim();
         if (string.IsNullOrEmpty(text))
         {
@@ -70,6 +82,9 @@ internal sealed record TvhSettings(Uri BaseUrl, string Username, string Password
             baseUrl = new UriBuilder(baseUrl) { UserName = string.Empty, Password = string.Empty }.Uri;
         }
 
-        return new TvhSettings(baseUrl, username ?? string.Empty, password ?? string.Empty, string.IsNullOrWhiteSpace(profile) ? "pass" : profile.Trim());
+        return new TvhSettings(baseUrl, username ?? string.Empty, password ?? string.Empty, string.IsNullOrWhiteSpace(profile) ? "pass" : profile.Trim())
+        {
+            PasswordUnreadable = unreadable,
+        };
     }
 }

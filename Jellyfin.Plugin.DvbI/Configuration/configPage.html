@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>DVB-I</title>
+</head>
+<body>
+    <div id="DvbIConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
+        <div data-role="content">
+            <div class="content-primary">
+                <style>
+                    #DvbIConfigPage .dvbi-card { border: 1px solid rgba(128,128,128,.35); border-radius: .4em; padding: 1em; margin-bottom: 1em; }
+                    #DvbIConfigPage .dvbi-row { display: flex; gap: .8em; align-items: flex-end; flex-wrap: wrap; }
+                    #DvbIConfigPage .dvbi-row > .grow { flex: 1 1 18em; }
+                    #DvbIConfigPage .dvbi-muted { opacity: .7; font-size: .9em; }
+                    #DvbIConfigPage table.dvbi-table { width: 100%; border-collapse: collapse; margin-top: .5em; }
+                    #DvbIConfigPage table.dvbi-table td { padding: .3em .5em; border-top: 1px solid rgba(128,128,128,.25); vertical-align: middle; }
+                    #DvbIConfigPage .dvbi-preview { max-height: 16em; overflow: auto; margin-top: .5em; }
+                    #DvbIConfigPage .dvbi-error { color: #e57373; }
+                </style>
+
+                <h2 data-t="title">DVB-I</h2>
+                <p class="dvbi-muted" data-t="intro"></p>
+
+                <form id="DvbIConfigForm">
+                    <h3 data-t="registries"></h3>
+                    <div id="dvbiRegistries"></div>
+                    <div class="dvbi-row">
+                        <div class="inputContainer grow">
+                            <label class="inputLabel" for="dvbiNewRegistry" data-t="registryUrl"></label>
+                            <input is="emby-input" type="url" id="dvbiNewRegistry" placeholder="https://…/query" />
+                        </div>
+                        <button is="emby-button" type="button" class="raised" id="dvbiAddRegistry"><span data-t="add"></span></button>
+                    </div>
+
+                    <h3 data-t="manualList"></h3>
+                    <p class="dvbi-muted" data-t="manualListHelp"></p>
+                    <div class="dvbi-row">
+                        <div class="inputContainer grow">
+                            <label class="inputLabel" for="dvbiManualName" data-t="manualName"></label>
+                            <input is="emby-input" type="text" id="dvbiManualName" data-tp="manualNamePlaceholder" />
+                        </div>
+                        <div class="inputContainer grow">
+                            <label class="inputLabel" for="dvbiManualUrl" data-t="serviceListUrl"></label>
+                            <input is="emby-input" type="url" id="dvbiManualUrl" placeholder="https://…/service-list/v6" />
+                        </div>
+                        <button is="emby-button" type="button" class="raised" id="dvbiAddManual"><span data-t="add"></span></button>
+                    </div>
+
+                    <h3 data-t="serviceLists"></h3>
+                    <p class="dvbi-muted" data-t="serviceListsHelp"></p>
+                    <div id="dvbiLists"></div>
+
+                    <h3 data-t="playback"></h3>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="dvbiPreferHls" type="checkbox" is="emby-checkbox" />
+                            <span data-t="preferHls"></span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription" data-t="preferHlsHelp"></div>
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="dvbiDashRewrite" type="checkbox" is="emby-checkbox" />
+                            <span data-t="dashRewrite"></span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription" data-t="dashRewriteHelp"></div>
+                    </div>
+
+
+                    <h3 data-t="broadcast"></h3>
+                    <p class="dvbi-muted" data-t="broadcastHelp"></p>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="dvbiPreferBroadcast" type="checkbox" is="emby-checkbox" />
+                            <span data-t="preferBroadcast"></span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription" data-t="preferBroadcastHelp"></div>
+                    </div>
+                    <div class="dvbi-row">
+                        <div class="inputContainer grow">
+                            <label class="inputLabel" for="dvbiTvhUrl" data-t="tvhUrl"></label>
+                            <input is="emby-input" type="text" id="dvbiTvhUrl" placeholder="http://tvheadend.local:9981" />
+                        </div>
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="dvbiTvhProfile" data-t="tvhProfile"></label>
+                            <input is="emby-input" type="text" id="dvbiTvhProfile" placeholder="pass" />
+                        </div>
+                    </div>
+                    <div class="dvbi-row">
+                        <div class="inputContainer grow">
+                            <label class="inputLabel" for="dvbiTvhUser" data-t="tvhUser"></label>
+                            <input is="emby-input" type="text" id="dvbiTvhUser" autocomplete="off" />
+                        </div>
+                        <div class="inputContainer grow">
+                            <label class="inputLabel" for="dvbiTvhPassword" data-t="tvhPassword"></label>
+                            <input is="emby-input" type="password" id="dvbiTvhPassword" autocomplete="new-password" />
+                        </div>
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="dvbiTvhEncrypted" type="checkbox" is="emby-checkbox" />
+                            <span data-t="tvhEncrypted"></span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription" data-t="tvhEncryptedHelp"></div>
+                    </div>
+                    <div class="dvbi-row">
+                        <button is="emby-button" type="button" class="raised" id="dvbiTvhImport"><span data-t="tvhImport"></span></button>
+                        <button is="emby-button" type="button" class="raised" id="dvbiTvhTest"><span data-t="tvhTest"></span></button>
+                    </div>
+                    <div id="dvbiTvhResult" class="dvbi-preview"></div>
+
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span data-t="save"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            (function () {
+                var pluginId = '0cd0bef6-8b6b-468b-9153-4360f27c466e';
+
+                var texts = {
+                    en: {
+                        title: 'DVB-I',
+                        intro: 'Live TV channels from DVB-I service lists (ETSI TS 103 770). Each enabled service list becomes a tuner in Live TV. Changes take effect after saving; the guide is refreshed automatically.',
+                        registries: 'Service list registries',
+                        registryUrl: 'Registry URL',
+                        add: 'Add',
+                        remove: 'Remove',
+                        loadLists: 'Show lists',
+                        manualList: 'Add a service list by URL',
+                        manualListHelp: 'For service lists that are not offered by any registry, e.g. test lists. Enter a display name of your choice and the address of the DVB-I service list.',
+                        manualName: 'Display name (optional)',
+                        manualNamePlaceholder: 'e.g. My test list',
+                        name: 'Name',
+                        serviceListUrl: 'Service list URL',
+                        serviceLists: 'Service lists',
+                        serviceListsHelp: 'Add lists from a registry above. Only one list per provider should normally be enabled, otherwise channels appear twice.',
+                        noLists: 'No service list configured yet.',
+                        enabled: 'Enabled',
+                        postcode: 'Postcode',
+                        findRegion: 'Find region',
+                        region: 'Region',
+                        noRegion: '(no region – default channel numbers)',
+                        offset: 'Channel number offset',
+                        preview: 'Preview channels',
+                        loading: 'Loading…',
+                        services: '{0} services, {1} playable over the internet',
+                        channels: '{0} channels',
+                        regionNotFound: 'No region found for this postcode.',
+                        alreadyAdded: 'This list has already been added.',
+                        playback: 'Playback',
+                        preferHls: 'Prefer HLS when available',
+                        preferHlsHelp: 'By default the DVB-I priority of the service list decides between DASH and HLS. Turn on to try HLS first where available.',
+                        dashRewrite: 'Prepare DASH streams for Jellyfin',
+                        dashRewriteHelp: 'Keeps a safe distance to the live edge, selects the best quality and fixes manifest URLs. Turn off only for testing.',
+                        broadcast: 'Broadcast via TVHeadend',
+                        broadcastHelp: 'Plays DVB-I broadcast instances (DVB-T/T2, DVB-S, DVB-C) through a TVHeadend server. Services are matched by their DVB identifiers; services that are only broadcast become channels when TVHeadend receives them.',
+                        preferBroadcast: 'Prefer broadcast',
+                        preferBroadcastHelp: 'When on, the DVB-I priority decides between broadcast and internet streams; if TVHeadend cannot deliver a service (not received, no free tuner), the internet stream is used.',
+                        tvhUrl: 'TVHeadend address',
+                        tvhProfile: 'Streaming profile',
+                        tvhUser: 'User name',
+                        tvhPassword: 'Password',
+                        tvhPasswordStored: '•••••••• stored – type to change',
+                        tvhEncrypted: 'Use encrypted services',
+                        tvhEncryptedHelp: 'Only if TVHeadend can descramble them (CI module or CA client).',
+                        tvhImport: 'Take over from TVHeadend plugin',
+                        tvhTest: 'Test connection',
+                        tvhImported: 'Settings taken over from the TVHeadend plugin. Check the address: inside Docker a full host name may be needed.',
+                        tvhNoPlugin: 'No TVHeadend plugin configuration found.',
+                        tvhResult: 'TVHeadend {0}: {1} services',
+                        tvhListResult: '{0}: {1} services via TVHeadend ({2} broadcast only), {3} not received',
+                        tvhConflicts: 'Not used (internet stream instead):',
+                        save: 'Save',
+                        saved: 'Settings saved. Live TV channels are being refreshed.'
+                    },
+                    de: {
+                        title: 'DVB-I',
+                        intro: 'Live-TV-Sender aus DVB-I-Service-Listen (ETSI TS 103 770). Jede aktive Service-Liste wird ein Tuner in Live TV. Änderungen werden beim Speichern übernommen, der Programmführer wird automatisch aktualisiert.',
+                        registries: 'Service-List-Registries',
+                        registryUrl: 'Registry-Adresse',
+                        add: 'Hinzufügen',
+                        remove: 'Entfernen',
+                        loadLists: 'Listen anzeigen',
+                        manualList: 'Service-Liste per Adresse hinzufügen',
+                        manualListHelp: 'Für Service-Listen, die in keiner Registry angeboten werden, z. B. Testlisten. Einen frei wählbaren Anzeigenamen und die Adresse der DVB-I-Service-Liste eintragen.',
+                        manualName: 'Anzeigename (optional)',
+                        manualNamePlaceholder: 'z. B. Meine Testliste',
+                        name: 'Name',
+                        serviceListUrl: 'Adresse der Service-Liste',
+                        serviceLists: 'Service-Listen',
+                        serviceListsHelp: 'Listen oben aus einer Registry hinzufügen. Pro Anbieter sollte normalerweise nur eine Liste aktiv sein, sonst erscheinen Sender doppelt.',
+                        noLists: 'Noch keine Service-Liste eingerichtet.',
+                        enabled: 'Aktiv',
+                        postcode: 'Postleitzahl',
+                        findRegion: 'Region ermitteln',
+                        region: 'Region',
+                        noRegion: '(keine Region – Standard-Senderplätze)',
+                        offset: 'Versatz der Senderplätze',
+                        preview: 'Sender anzeigen',
+                        loading: 'Lade…',
+                        services: '{0} Sender, davon {1} per Internet abspielbar',
+                        channels: '{0} Sender',
+                        regionNotFound: 'Für diese Postleitzahl wurde keine Region gefunden.',
+                        alreadyAdded: 'Diese Liste ist bereits hinzugefügt.',
+                        playback: 'Wiedergabe',
+                        preferHls: 'HLS bevorzugen, wenn vorhanden',
+                        preferHlsHelp: 'Standardmäßig entscheidet die DVB-I-Priorität der Service-Liste zwischen DASH und HLS. Einschalten, um HLS zuerst zu versuchen, wo vorhanden.',
+                        dashRewrite: 'DASH-Streams für Jellyfin aufbereiten',
+                        dashRewriteHelp: 'Hält Abstand zum Live-Rand, wählt die beste Qualität und korrigiert Adressen im Manifest. Nur zum Testen ausschalten.',
+                        broadcast: 'Rundfunk über TVHeadend',
+                        broadcastHelp: 'Spielt die Rundfunk-Instanzen aus DVB-I (DVB-T/T2, DVB-S, DVB-C) über einen TVHeadend-Server ab. Die Zuordnung erfolgt über die DVB-Kennungen; Sender, die es nur per Rundfunk gibt, werden zu Kanälen, wenn TVHeadend sie empfängt.',
+                        preferBroadcast: 'Broadcast bevorzugen',
+                        preferBroadcastHelp: 'Wenn an, entscheidet die DVB-I-Priorität zwischen Rundfunk und Internet-Stream; kann TVHeadend einen Sender nicht liefern (nicht empfangen, kein Tuner frei), wird der Internet-Stream genutzt.',
+                        tvhUrl: 'TVHeadend-Adresse',
+                        tvhProfile: 'Streaming-Profil',
+                        tvhUser: 'Benutzername',
+                        tvhPassword: 'Passwort',
+                        tvhPasswordStored: '•••••••• gespeichert – zum Ändern neu eingeben',
+                        tvhEncrypted: 'Verschlüsselte Dienste nutzen',
+                        tvhEncryptedHelp: 'Nur wenn TVHeadend sie entschlüsseln kann (CI-Modul oder CA-Client).',
+                        tvhImport: 'Aus TVHeadend-Plugin übernehmen',
+                        tvhTest: 'Verbindung testen',
+                        tvhImported: 'Einstellungen aus dem TVHeadend-Plugin übernommen. Bitte die Adresse prüfen: Im Docker-Container ist ggf. der vollständige Hostname nötig.',
+                        tvhNoPlugin: 'Keine Konfiguration des TVHeadend-Plugins gefunden.',
+                        tvhResult: 'TVHeadend {0}: {1} Dienste',
+                        tvhListResult: '{0}: {1} Sender über TVHeadend ({2} nur Rundfunk), {3} nicht empfangen',
+                        tvhConflicts: 'Nicht genutzt (stattdessen Internet-Stream):',
+                        save: 'Speichern',
+                        saved: 'Einstellungen gespeichert. Die Live-TV-Sender werden aktualisiert.'
+                    }
+                };
+
+                var lang = (document.documentElement.getAttribute('lang') || navigator.language || 'en').toLowerCase();
+                var t = texts[lang.substring(0, 2)] || texts.en;
+                function tr(key) {
+                    var s = t[key] || texts.en[key] || key;
+                    for (var i = 1; i < arguments.length; i++) {
+                        s = s.replace('{' + (i - 1) + '}', arguments[i]);
+                    }
+                    return s;
+                }
+                function esc(s) {
+                    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+                    });
+                }
+                function newId() {
+                    return ([1e7] + 1e3 + 4e3 + 8e3 + 1e11).replace(/[018]/g, function (c) {
+                        return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+                    });
+                }
+                function api(path, params) {
+                    return ApiClient.getJSON(ApiClient.getUrl(path, params));
+                }
+
+                var page = document.querySelector('#DvbIConfigPage');
+                var config = null;
+                var listInfo = {};
+
+                function translateStatic() {
+                    page.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = tr(el.getAttribute('data-t')); });
+                    page.querySelectorAll('[data-tp]').forEach(function (el) { el.setAttribute('placeholder', tr(el.getAttribute('data-tp'))); });
+                }
+
+                function renderRegistries() {
+                    var html = (config.RegistryUrls || []).map(function (url, i) {
+                        return '<div class="dvbi-card" data-registry="' + i + '">'
+                            + '<div class="dvbi-row"><div class="grow">' + esc(url) + '</div>'
+                            + '<button is="emby-button" type="button" class="raised" data-action="load-registry">' + esc(tr('loadLists')) + '</button>'
+                            + '<button is="emby-button" type="button" class="raised" data-action="remove-registry">' + esc(tr('remove')) + '</button></div>'
+                            + '<div class="dvbi-offerings"></div></div>';
+                    }).join('');
+                    page.querySelector('#dvbiRegistries').innerHTML = html;
+                }
+
+                function renderLists() {
+                    var lists = config.ServiceLists || [];
+                    if (!lists.length) {
+                        page.querySelector('#dvbiLists').innerHTML = '<p class="dvbi-muted">' + esc(tr('noLists')) + '</p>';
+                        return;
+                    }
+                    page.querySelector('#dvbiLists').innerHTML = lists.map(function (l) {
+                        return '<div class="dvbi-card" data-list="' + esc(l.Id) + '">'
+                            + '<div class="dvbi-row">'
+                            + '<label class="emby-checkbox-label"><input type="checkbox" is="emby-checkbox" data-field="Enabled"' + (l.Enabled ? ' checked' : '') + ' /><span>' + esc(tr('enabled')) + '</span></label>'
+                            + '<div class="inputContainer grow"><input is="emby-input" type="text" data-field="Name" label="' + esc(tr('name')) + '" value="' + esc(l.Name) + '" /></div>'
+                            + '<button is="emby-button" type="button" class="raised" data-action="remove-list">' + esc(tr('remove')) + '</button>'
+                            + '</div>'
+                            + '<div class="dvbi-muted">' + esc(l.Url) + '</div>'
+                            + '<div class="dvbi-muted dvbi-info"></div>'
+                            + '<div class="dvbi-row">'
+                            + '<div class="inputContainer"><input is="emby-input" type="text" data-field="Postcode" label="' + esc(tr('postcode')) + '" value="' + esc(l.Postcode) + '" /></div>'
+                            + '<button is="emby-button" type="button" class="raised" data-action="find-region">' + esc(tr('findRegion')) + '</button>'
+                            + '<div class="selectContainer grow"><select is="emby-select" data-field="RegionId" label="' + esc(tr('region')) + '"><option value="">' + esc(tr('noRegion')) + '</option></select></div>'
+                            + '<div class="inputContainer"><input is="emby-input" type="number" data-field="ChannelNumberOffset" label="' + esc(tr('offset')) + '" value="' + esc(l.ChannelNumberOffset || 0) + '" /></div>'
+                            + '</div>'
+                            + '<button is="emby-button" type="button" class="raised" data-action="preview">' + esc(tr('preview')) + '</button>'
+                            + '<div class="dvbi-preview"></div>'
+                            + '</div>';
+                    }).join('');
+                    lists.forEach(loadListInfo);
+                }
+
+                function card(listId) {
+                    return page.querySelector('[data-list="' + listId + '"]');
+                }
+
+                function fillRegions(list) {
+                    var info = listInfo[list.Url];
+                    var el = card(list.Id);
+                    if (!info || !el) {
+                        return;
+                    }
+                    var select = el.querySelector('[data-field="RegionId"]');
+                    var options = '<option value="">' + esc(tr('noRegion')) + '</option>';
+                    info.Regions.forEach(function (r) {
+                        var indent = new Array(r.Depth + 1).join('   ');
+                        options += '<option value="' + esc(r.Id) + '"' + (r.Selectable ? '' : ' disabled') + '>' + indent + esc(r.Name) + '</option>';
+                    });
+                    select.innerHTML = options;
+                    select.value = list.RegionId || '';
+                    el.querySelector('.dvbi-info').textContent = info.Name + ' · ' + info.Provider + ' · ' + tr('services', info.ServiceCount, info.IpServiceCount);
+                }
+
+                function loadListInfo(list) {
+                    if (listInfo[list.Url]) {
+                        fillRegions(list);
+                        return;
+                    }
+                    var el = card(list.Id);
+                    el.querySelector('.dvbi-info').textContent = tr('loading');
+                    api('DvbI/ServiceList', { url: list.Url }).then(function (info) {
+                        listInfo[list.Url] = info;
+                        fillRegions(list);
+                    }, function () {
+                        el.querySelector('.dvbi-info').innerHTML = '<span class="dvbi-error">' + esc(list.Url) + ' ✗</span>';
+                    });
+                }
+
+                function readListsFromForm() {
+                    (config.ServiceLists || []).forEach(function (l) {
+                        var el = card(l.Id);
+                        if (!el) {
+                            return;
+                        }
+                        l.Enabled = el.querySelector('[data-field="Enabled"]').checked;
+                        l.Name = el.querySelector('[data-field="Name"]').value;
+                        l.Postcode = el.querySelector('[data-field="Postcode"]').value.trim();
+                        var select = el.querySelector('[data-field="RegionId"]');
+                        l.RegionId = select.value;
+                        l.RegionName = select.value ? select.options[select.selectedIndex].text.trim() : '';
+                        l.ChannelNumberOffset = parseInt(el.querySelector('[data-field="ChannelNumberOffset"]').value, 10) || 0;
+                    });
+                }
+
+                function addList(name, url, registryUrl) {
+                    readListsFromForm();
+                    config.ServiceLists = config.ServiceLists || [];
+                    if (config.ServiceLists.some(function (l) { return l.Url === url; })) {
+                        Dashboard.alert(tr('alreadyAdded'));
+                        return;
+                    }
+                    config.ServiceLists.push({
+                        Id: newId().replace(/-/g, ''),
+                        Name: name || url,
+                        Url: url,
+                        RegistryUrl: registryUrl || '',
+                        Enabled: true,
+                        Postcode: '',
+                        RegionId: '',
+                        RegionName: '',
+                        ChannelNumberOffset: 0
+                    });
+                    renderLists();
+                }
+
+                function findList(el) {
+                    var id = el.closest('[data-list]').getAttribute('data-list');
+                    return config.ServiceLists.filter(function (l) { return l.Id === id; })[0];
+                }
+
+                page.addEventListener('click', function (e) {
+                    var button = e.target.closest('[data-action]');
+                    if (!button) {
+                        return;
+                    }
+                    var action = button.getAttribute('data-action');
+
+                    if (action === 'remove-registry') {
+                        var idx = parseInt(button.closest('[data-registry]').getAttribute('data-registry'), 10);
+                        config.RegistryUrls.splice(idx, 1);
+                        renderRegistries();
+                    } else if (action === 'load-registry') {
+                        var regCard = button.closest('[data-registry]');
+                        var regUrl = config.RegistryUrls[parseInt(regCard.getAttribute('data-registry'), 10)];
+                        var target = regCard.querySelector('.dvbi-offerings');
+                        target.textContent = tr('loading');
+                        api('DvbI/Registry', { url: regUrl }).then(function (offerings) {
+                            target.innerHTML = '<table class="dvbi-table">' + offerings.map(function (o, i) {
+                                return '<tr><td><b>' + esc(o.Name) + '</b><br><span class="dvbi-muted">' + esc(o.Provider) + ' · ' + esc(o.Url) + '</span></td>'
+                                    + '<td class="dvbi-muted">' + esc((o.Countries || []).join(', ')) + '</td>'
+                                    + '<td><button is="emby-button" type="button" class="raised" data-action="add-offering" data-index="' + i + '">' + esc(tr('add')) + '</button></td></tr>';
+                            }).join('') + '</table>';
+                            target.offerings = offerings;
+                        }, function () {
+                            target.innerHTML = '<span class="dvbi-error">' + esc(regUrl) + ' ✗</span>';
+                        });
+                    } else if (action === 'add-offering') {
+                        var holder = button.closest('.dvbi-offerings');
+                        var regIdx = parseInt(button.closest('[data-registry]').getAttribute('data-registry'), 10);
+                        var offering = holder.offerings[parseInt(button.getAttribute('data-index'), 10)];
+                        addList(offering.Provider ? offering.Provider + ' ' + offering.Name : offering.Name, offering.Url, config.RegistryUrls[regIdx]);
+                    } else if (action === 'remove-list') {
+                        readListsFromForm();
+                        var removeId = button.closest('[data-list]').getAttribute('data-list');
+                        config.ServiceLists = config.ServiceLists.filter(function (l) { return l.Id !== removeId; });
+                        renderLists();
+                    } else if (action === 'find-region') {
+                        var list = findList(button);
+                        var el = card(list.Id);
+                        var postcode = el.querySelector('[data-field="Postcode"]').value.trim();
+                        if (!postcode) {
+                            return;
+                        }
+                        api('DvbI/ServiceList/Region', { url: list.Url, postcode: postcode }).then(function (region) {
+                            el.querySelector('[data-field="RegionId"]').value = region.Id;
+                        }, function () {
+                            Dashboard.alert(tr('regionNotFound'));
+                        });
+                    } else if (action === 'preview') {
+                        readListsFromForm();
+                        var pl = findList(button);
+                        var box = card(pl.Id).querySelector('.dvbi-preview');
+                        box.textContent = tr('loading');
+                        api('DvbI/ServiceList/Channels', { url: pl.Url, regionId: pl.RegionId, offset: pl.ChannelNumberOffset }).then(function (channels) {
+                            box.innerHTML = '<div class="dvbi-muted">' + esc(tr('channels', channels.length)) + '</div><table class="dvbi-table">'
+                                + channels.map(function (c) {
+                                    return '<tr><td>' + esc(c.Number) + '</td><td>' + esc(c.Name) + '</td><td class="dvbi-muted">' + esc(c.Kind) + '</td><td class="dvbi-muted">' + esc(c.Deliveries.join(' → ')) + '</td></tr>';
+                                }).join('') + '</table>';
+                        }, function () {
+                            box.innerHTML = '<span class="dvbi-error">✗</span>';
+                        });
+                    }
+                });
+
+                var storedTvhPassword = '';
+
+                function showTvhPasswordState() {
+                    var input = page.querySelector('#dvbiTvhPassword');
+                    input.value = '';
+                    input.setAttribute('placeholder', storedTvhPassword ? tr('tvhPasswordStored') : '');
+                }
+
+                function readTvh() {
+                    return {
+                        PreferBroadcast: page.querySelector('#dvbiPreferBroadcast').checked,
+                        TvheadendUrl: page.querySelector('#dvbiTvhUrl').value.trim(),
+                        TvheadendUsername: page.querySelector('#dvbiTvhUser').value.trim(),
+                        // An empty field keeps the stored (encrypted) password; the plain password is never sent to the page.
+                        TvheadendPassword: page.querySelector('#dvbiTvhPassword').value || storedTvhPassword,
+                        TvheadendProfile: page.querySelector('#dvbiTvhProfile').value.trim() || 'pass',
+                        TvheadendAllowEncrypted: page.querySelector('#dvbiTvhEncrypted').checked
+                    };
+                }
+
+                page.querySelector('#dvbiTvhImport').addEventListener('click', function () {
+                    api('DvbI/Tvheadend/ImportFromPlugin').then(function (s) {
+                        page.querySelector('#dvbiTvhUrl').value = s.Url || '';
+                        page.querySelector('#dvbiTvhUser').value = s.Username || '';
+                        storedTvhPassword = s.Password || '';
+                        showTvhPasswordState();
+                        page.querySelector('#dvbiTvhProfile').value = s.Profile || 'pass';
+                        Dashboard.alert(tr('tvhImported'));
+                    }, function () {
+                        Dashboard.alert(tr('tvhNoPlugin'));
+                    });
+                });
+
+                page.querySelector('#dvbiTvhTest').addEventListener('click', function () {
+                    var t = readTvh();
+                    var box = page.querySelector('#dvbiTvhResult');
+                    box.textContent = tr('loading');
+                    ApiClient.ajax({
+                        type: 'POST',
+                        url: ApiClient.getUrl('DvbI/Tvheadend/Test'),
+                        data: JSON.stringify({ Url: t.TvheadendUrl, Username: t.TvheadendUsername, Password: t.TvheadendPassword, Profile: t.TvheadendProfile, AllowEncrypted: t.TvheadendAllowEncrypted }),
+                        contentType: 'application/json',
+                        dataType: 'json'
+                    }).then(function (r) {
+                        var html = '<div>' + esc(tr('tvhResult', r.Version, r.Services)) + '</div>';
+                        (r.Lists || []).forEach(function (l) {
+                            html += '<div><b>' + esc(tr('tvhListResult', l.ServiceList, l.Usable, l.BroadcastOnly, l.NotReceived)) + '</b></div>';
+                            html += '<div class="dvbi-muted">' + esc((l.UsableServices || []).join(', ')) + '</div>';
+                            if (l.Conflicts && l.Conflicts.length) {
+                                html += '<div>' + esc(tr('tvhConflicts')) + '</div><table class="dvbi-table">' + l.Conflicts.map(function (c) {
+                                    return '<tr><td>' + esc(c.Service) + '</td><td class="dvbi-muted">' + esc(c.Delivery + ' ' + c.Triplet) + '</td><td>' + esc(c.TvheadendService || '') + '</td><td class="dvbi-error">' + esc(c.Reason) + '</td></tr>';
+                                }).join('') + '</table>';
+                            }
+                        });
+                        box.innerHTML = html;
+                    }, function () {
+                        box.innerHTML = '<span class="dvbi-error">' + esc(t.TvheadendUrl) + ' ✗</span>';
+                    });
+                });
+
+                page.querySelector('#dvbiAddRegistry').addEventListener('click', function () {
+                    var input = page.querySelector('#dvbiNewRegistry');
+                    var url = input.value.trim();
+                    if (url) {
+                        config.RegistryUrls = (config.RegistryUrls || []).concat([url]);
+                        input.value = '';
+                        renderRegistries();
+                    }
+                });
+
+                page.querySelector('#dvbiAddManual').addEventListener('click', function () {
+                    var url = page.querySelector('#dvbiManualUrl').value.trim();
+                    if (url) {
+                        addList(page.querySelector('#dvbiManualName').value.trim(), url, '');
+                        page.querySelector('#dvbiManualUrl').value = '';
+                        page.querySelector('#dvbiManualName').value = '';
+                    }
+                });
+
+                page.addEventListener('pageshow', function () {
+                    translateStatic();
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(pluginId).then(function (c) {
+                        config = c;
+                        config.RegistryUrls = config.RegistryUrls || [];
+                        config.ServiceLists = config.ServiceLists || [];
+                        page.querySelector('#dvbiPreferHls').checked = config.PreferHls;
+                        page.querySelector('#dvbiDashRewrite').checked = config.EnableDashRewrite !== false;
+                        page.querySelector('#dvbiPreferBroadcast').checked = !!config.PreferBroadcast;
+                        page.querySelector('#dvbiTvhUrl').value = config.TvheadendUrl || '';
+                        page.querySelector('#dvbiTvhUser').value = config.TvheadendUsername || '';
+                        storedTvhPassword = config.TvheadendPassword || '';
+                        showTvhPasswordState();
+                        page.querySelector('#dvbiTvhProfile').value = config.TvheadendProfile || 'pass';
+                        page.querySelector('#dvbiTvhEncrypted').checked = !!config.TvheadendAllowEncrypted;
+                        renderRegistries();
+                        renderLists();
+                        Dashboard.hideLoadingMsg();
+                    });
+                });
+
+                page.querySelector('#DvbIConfigForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    Dashboard.showLoadingMsg();
+                    readListsFromForm();
+                    config.PreferHls = page.querySelector('#dvbiPreferHls').checked;
+                    config.EnableDashRewrite = page.querySelector('#dvbiDashRewrite').checked;
+                    Object.assign(config, readTvh());
+                    ApiClient.updatePluginConfiguration(pluginId, config).then(function (result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                        // Reload so the page holds the encrypted password instead of what was typed.
+                        ApiClient.getPluginConfiguration(pluginId).then(function (c) {
+                            config.TvheadendPassword = c.TvheadendPassword;
+                            storedTvhPassword = c.TvheadendPassword || '';
+                            showTvhPasswordState();
+                        });
+                        Dashboard.alert(tr('saved'));
+                    });
+                    return false;
+                });
+            })();
+        </script>
+    </div>
+</body>
+</html>

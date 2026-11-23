@@ -1,0 +1,17 @@
+---
+name: "DVB-I"
+guid: "0cd0bef6-8b6b-468b-9153-4360f27c466e"
+version: "1.0.0"
+targetAbi: "12.4.0.0"
+framework: "net10.0"
+overview: "DVB-I service lists and programme guide for Live TV"
+description: >
+  Live TV channels and programme guide from DVB-I service lists (ETSI TS 103 770)
+  with TV-Anytime metadata, DASH/HLS playback, optional broadcast reception through
+  TVHeadend, recordings and a client API.
+category: "LiveTV"
+owner: "Bond246"
+artifacts:
+- "Jellyfin.Plugin.DvbI.dll"
+changelog: >
+  Initial public release.

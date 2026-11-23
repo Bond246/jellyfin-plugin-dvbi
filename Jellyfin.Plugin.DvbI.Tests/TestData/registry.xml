@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ServiceListEntryPoints xmlns="urn:dvb:metadata:servicelistdiscovery:2024" xmlns:dvbi-types="urn:dvb:metadata:servicediscovery-types:2023" xml:lang="de">
+  <ServiceListRegistryEntity regulatorFlag="true">
+    <Name type="main">Example Registry</Name>
+  </ServiceListRegistryEntity>
+  <ProviderOffering>
+    <Provider regulatorFlag="true">
+      <Name type="main">Example Provider</Name>
+      <Name type="variant">ex</Name>
+    </Provider>
+    <ServiceListOffering regulatorListFlag="true">
+      <dvbi-types:ServiceListName>PRODUCTION</dvbi-types:ServiceListName>
+      <dvbi-types:ServiceListURI contentType="application/xml">
+        <dvbi-types:URI>https://lists.example.org/service-list/v6</dvbi-types:URI>
+      </dvbi-types:ServiceListURI>
+      <dvbi-types:Delivery>
+        <dvbi-types:DASHDelivery/>
+        <dvbi-types:DVBSDelivery><dvbi-types:OrbitalPosition>19.2</dvbi-types:OrbitalPosition></dvbi-types:DVBSDelivery>
+      </dvbi-types:Delivery>
+      <dvbi-types:Language>de</dvbi-types:Language>
+      <dvbi-types:TargetCountry>DEU</dvbi-types:TargetCountry>
+      <dvbi-types:ServiceListId>tag:example.org,2026:testlist</dvbi-types:ServiceListId>
+    </ServiceListOffering>
+    <ServiceListOffering regulatorListFlag="false">
+      <dvbi-types:ServiceListName>TRIAL</dvbi-types:ServiceListName>
+      <dvbi-types:ServiceListURI contentType="application/xml">
+        <dvbi-types:URI>https://trial.example.org/service-list/v6</dvbi-types:URI>
+      </dvbi-types:ServiceListURI>
+    </ServiceListOffering>
+    <ServiceListOffering>
+      <dvbi-types:ServiceListName>NO URI</dvbi-types:ServiceListName>
+    </ServiceListOffering>
+  </ProviderOffering>
+</ServiceListEntryPoints>

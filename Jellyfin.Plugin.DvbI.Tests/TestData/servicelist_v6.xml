@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic test service list with the structure of German DVB-I service lists (schema v6 namespaces). -->
+<ServiceList xmlns="urn:dvb:metadata:servicediscovery:2024" xmlns:tva="urn:tva:metadata:2024" xmlns:mpeg7="urn:tva:mpeg7:2008"
+             xmlns:dvbi-types="urn:dvb:metadata:servicediscovery-types:2023" xmlns:hls="vnd:apple:mpegurl"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="tag:example.org,2026:testlist" version="42" responseStatus="OK" xml:lang="de">
+  <Name>Test List</Name>
+  <ProviderName>Example</ProviderName>
+  <RegionList version="1">
+    <Region countryCodes="DEU" regionID="area-de">
+      <RegionName>Deutschland</RegionName>
+      <Region regionID="area-de_by" selectable="false">
+        <RegionName>Bayern</RegionName>
+        <Region regionID="area-de_by_ob">
+          <RegionName>Oberbayern</RegionName>
+          <Region regionID="area-de_by_ob_muc">
+            <RegionName>München</RegionName>
+            <Postcode>80331</Postcode>
+            <PostcodeRange from="80333" to="81929"/>
+          </Region>
+        </Region>
+        <Region regionID="area-de_by_ofr">
+          <RegionName>Oberfranken</RegionName>
+          <WildcardPostcode>95*</WildcardPostcode>
+        </Region>
+      </Region>
+      <Region regionID="area-de_hh">
+        <RegionName>Hamburg</RegionName>
+        <Postcode>20095</Postcode>
+        <Postcode>22 769</Postcode>
+      </Region>
+    </Region>
+  </RegionList>
+  <LCNTableList>
+    <LCNTable version="1">
+      <LCN channelNumber="1" serviceRef="tag:example.org,2026:one"/>
+      <LCN channelNumber="2" serviceRef="tag:example.org,2026:two"/>
+      <LCN channelNumber="3" serviceRef="tag:example.org,2026:regional-ndr"/>
+      <LCN channelNumber="50" serviceRef="tag:example.org,2026:radio"/>
+    </LCNTable>
+    <LCNTable version="1">
+      <TargetRegion>area-de_by</TargetRegion>
+      <LCN channelNumber="1" serviceRef="tag:example.org,2026:one"/>
+      <LCN channelNumber="2" serviceRef="tag:example.org,2026:two"/>
+      <LCN channelNumber="3" serviceRef="tag:example.org,2026:regional-br"/>
+      <LCN channelNumber="4" serviceRef="tag:example.org,2026:regional-ndr" visible="false"/>
+    </LCNTable>
+    <LCNTable version="1">
+      <TargetRegion>area-de_hh</TargetRegion>
+      <LCN channelNumber="1" serviceRef="tag:example.org,2026:one"/>
+      <LCN channelNumber="3" serviceRef="tag:example.org,2026:regional-ndr"/>
+      <LCN channelNumber="7" serviceRef="tag:example.org,2026:two"/>
+    </LCNTable>
+  </LCNTableList>
+  <ContentGuideSourceList>
+    <ContentGuideSource CGSID="cgs-1">
+      <ProviderName>Guide Provider</ProviderName>
+      <ScheduleInfoEndpoint contentType="application/xml"><dvbi-types:URI>https://epg.example.org/schedule</dvbi-types:URI></ScheduleInfoEndpoint>
+      <ProgramInfoEndpoint contentType="application/xml"><dvbi-types:URI>https://epg.example.org/program</dvbi-types:URI></ProgramInfoEndpoint>
+    </ContentGuideSource>
+  </ContentGuideSourceList>
+  <Service version="1">
+    <UniqueIdentifier>tag:example.org,2026:one</UniqueIdentifier>
+    <ServiceInstance priority="1">
+      <DisplayName>One</DisplayName>
+      <DASHDeliveryParameters>
+        <UriBasedLocation contentType="application/dash+xml"><dvbi-types:URI>https://cdn.example.org/one/manifest.mpd</dvbi-types:URI></UriBasedLocation>
+      </DASHDeliveryParameters>
+    </ServiceInstance>
+    <ServiceInstance priority="2">
+      <DVBSDeliveryParameters>
+        <DVBTriplet origNetId="1" tsId="1051" serviceId="28106"/>
+        <TargetSID>1</TargetSID>
+        <OrbitalPosition>19.2E</OrbitalPosition>
+        <Frequency>11493750</Frequency>
+      </DVBSDeliveryParameters>
+    </ServiceInstance>
+    <ServiceName>Channel One HD</ServiceName>
+    <ProviderName>Broadcaster A</ProviderName>
+    <RelatedMaterial>
+      <tva:HowRelated href="urn:dvb:metadata:cs:HowRelatedCS:2021:1001.2"/>
+      <tva:MediaLocator><tva:MediaUri contentType="image/png">https://img.example.org/one.png</tva:MediaUri></tva:MediaLocator>
+    </RelatedMaterial>
+    <ServiceType href="urn:dvb:metadata:cs:ServiceTypeCS:2019:linear"/>
+    <ContentGuideSourceRef>cgs-1</ContentGuideSourceRef>
+    <ContentGuideServiceRef>epg-one</ContentGuideServiceRef>
+  </Service>
+  <Service version="1">
+    <UniqueIdentifier>tag:example.org,2026:two</UniqueIdentifier>
+    <ServiceInstance priority="4">
+      <DASHDeliveryParameters>
+        <UriBasedLocation contentType="application/dash+xml"><dvbi-types:URI>https://cdn.example.org/two/manifest.mpd</dvbi-types:URI></UriBasedLocation>
+      </DASHDeliveryParameters>
+    </ServiceInstance>
+    <ServiceInstance priority="5">
+      <OtherDeliveryParameters xsi:type="hls:m3u8RefType" extensionName="vnd.apple.mpegurl">
+        <hls:UriBasedLocation contentType="application/vnd.apple.mpegurl"><dvbi-types:URI>https://cdn.example.org/two/master.m3u8</dvbi-types:URI></hls:UriBasedLocation>
+      </OtherDeliveryParameters>
+    </ServiceInstance>
+    <ServiceName>Channel Two</ServiceName>
+    <ProviderName>Broadcaster B</ProviderName>
+    <ServiceType href="urn:dvb:metadata:cs:ServiceTypeCS:2019:linear"/>
+  </Service>
+  <Service version="1">
+    <UniqueIdentifier>tag:example.org,2026:regional-br</UniqueIdentifier>
+    <ServiceInstance priority="1">
+      <DASHDeliveryParameters>
+        <UriBasedLocation contentType="application/dash+xml"><dvbi-types:URI>https://cdn.example.org/br/manifest.mpd</dvbi-types:URI></UriBasedLocation>
+      </DASHDeliveryParameters>
+    </ServiceInstance>
+    <ServiceName>Regional BR</ServiceName>
+    <ProviderName>Broadcaster A</ProviderName>
+    <ServiceType href="urn:dvb:metadata:cs:ServiceTypeCS:2019:linear"/>
+  </Service>
+  <Service version="1">
+    <UniqueIdentifier>tag:example.org,2026:regional-ndr</UniqueIdentifier>
+    <ServiceInstance priority="1">
+      <DASHDeliveryParameters>
+        <UriBasedLocation contentType="application/dash+xml"><dvbi-types:URI>https://cdn.example.org/ndr/manifest.mpd</dvbi-types:URI></UriBasedLocation>
+      </DASHDeliveryParameters>
+    </ServiceInstance>
+    <ServiceName>Regional NDR</ServiceName>
+    <ProviderName>Broadcaster A</ProviderName>
+    <ServiceType href="urn:dvb:metadata:cs:ServiceTypeCS:2019:linear"/>
+  </Service>
+  <Service version="1">
+    <UniqueIdentifier>tag:example.org,2026:radio</UniqueIdentifier>
+    <ServiceInstance priority="1">
+      <DASHDeliveryParameters>
+        <UriBasedLocation contentType="application/dash+xml"><dvbi-types:URI>https://cdn.example.org/radio/manifest.mpd</dvbi-types:URI></UriBasedLocation>
+      </DASHDeliveryParameters>
+    </ServiceInstance>
+    <ServiceName>Radio One</ServiceName>
+    <ProviderName>Broadcaster A</ProviderName>
+    <ServiceType href="urn:dvb:metadata:cs:ServiceTypeCS:2019:linear-radio"/>
+  </Service>
+  <Service version="1">
+    <UniqueIdentifier>tag:example.org,2026:satonly</UniqueIdentifier>
+    <ServiceInstance priority="1">
+      <DVBCDeliveryParameters><DVBTriplet origNetId="61441" tsId="10003" serviceId="28721"/><TargetSID>1</TargetSID></DVBCDeliveryParameters>
+    </ServiceInstance>
+    <ServiceName>Cable Only</ServiceName>
+    <ProviderName>Broadcaster C</ProviderName>
+  </Service>
+  <Service version="1">
+    <UniqueIdentifier>tag:example.org,2026:drm</UniqueIdentifier>
+    <ServiceInstance priority="1">
+      <ContentProtection><CASystemId>0x4AE0</CASystemId></ContentProtection>
+      <DASHDeliveryParameters>
+        <UriBasedLocation contentType="application/dash+xml"><dvbi-types:URI>https://cdn.example.org/drm/manifest.mpd</dvbi-types:URI></UriBasedLocation>
+      </DASHDeliveryParameters>
+    </ServiceInstance>
+    <ServiceName>Pay Channel</ServiceName>
+    <ProviderName>Broadcaster D</ProviderName>
+  </Service>
+  <Service version="1">
+    <UniqueIdentifier>tag:example.org,2026:extra</UniqueIdentifier>
+    <ServiceInstance>
+      <OtherDeliveryParameters extensionName="vnd.apple.mpegurl">
+        <UriBasedLocation contentType="application/vnd.apple.mpegurl"><dvbi-types:URI>https://cdn.example.org/extra/master.m3u8</dvbi-types:URI></UriBasedLocation>
+      </OtherDeliveryParameters>
+    </ServiceInstance>
+    <ServiceName>Extra Channel</ServiceName>
+    <ProviderName>Broadcaster E</ProviderName>
+    <UnknownFutureElement>ignored</UnknownFutureElement>
+  </Service>
+  <Service version="1">
+    <UniqueIdentifier>tag:example.org,2026:private</UniqueIdentifier>
+    <ServiceInstance priority="1">
+      <DVBSDeliveryParameters><DVBTriplet origNetId="1" tsId="1017" serviceId="12003"/><TargetSID>1</TargetSID></DVBSDeliveryParameters>
+    </ServiceInstance>
+    <ServiceInstance priority="3">
+      <DisplayName>Private</DisplayName>
+      <RelatedMaterial>
+        <tva:HowRelated href="urn:dvb:metadata:cs:LinkedApplicationCS:2019:1.2"/>
+        <tva:MediaLocator><tva:MediaUri contentType="application/vnd.dvb.ait+xml">https://apps.example.org/ait/private-instance.aitx</tva:MediaUri></tva:MediaLocator>
+      </RelatedMaterial>
+      <ContentProtection><DRMSystemId encryptionScheme="cenc">9a04f079-9840-4286-ab92-e65be0885f95</DRMSystemId></ContentProtection>
+    </ServiceInstance>
+    <ServiceName>Private Channel</ServiceName>
+    <ProviderName>Private Broadcaster</ProviderName>
+    <RelatedMaterial>
+      <tva:HowRelated href="urn:dvb:metadata:cs:LinkedApplicationCS:2019:1.2"/>
+      <tva:MediaLocator><tva:MediaUri contentType="application/vnd.dvb.ait+xml">https://apps.example.org/ait/private.aitx</tva:MediaUri></tva:MediaLocator>
+    </RelatedMaterial>
+    <RelatedMaterial>
+      <tva:HowRelated href="urn:dvb:metadata:cs:HowRelatedCS:2021:1001.2"/>
+      <tva:MediaLocator><tva:MediaUri contentType="image/png">https://img.example.org/private.png</tva:MediaUri></tva:MediaLocator>
+    </RelatedMaterial>
+    <ServiceType href="urn:dvb:metadata:cs:ServiceTypeCS:2019:linear"/>
+  </Service>
+  <TestService version="1">
+    <UniqueIdentifier>tag:example.org,2026:test</UniqueIdentifier>
+    <ServiceName>Test</ServiceName>
+    <ProviderName>Test</ProviderName>
+  </TestService>
+</ServiceList>

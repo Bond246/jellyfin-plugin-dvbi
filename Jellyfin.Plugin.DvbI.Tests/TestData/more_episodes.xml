@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic More Episodes response with the structure of a German content guide server. -->
+<TVAMain xmlns="urn:tva:metadata:2024" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xml:lang="de">
+  <ProgramDescription>
+    <ProgramInformationTable>
+      <ProgramInformation programId="crid://example.org/ep/2">
+        <BasicDescription>
+          <Title type="main"><![CDATA[Die Kochshow]]></Title>
+          <Title type="secondary"><![CDATA[Folge 2]]></Title>
+          <Synopsis length="medium">Zweite Folge</Synopsis>
+          <Genre href="urn:dvb:metadata:cs:ContentSubject:2019:3" type="main"/>
+          <RelatedMaterial>
+            <HowRelated href="urn:tva:metadata:cs:HowRelatedCS:2012:19"/>
+            <MediaLocator><MediaUri contentType="image/png">https://img.example.org/2.png</MediaUri></MediaLocator>
+          </RelatedMaterial>
+        </BasicDescription>
+        <MemberOf xsi:type="MemberOfType" crid="crid://example.org/more-episodes/results" index="0"/>
+      </ProgramInformation>
+      <ProgramInformation programId="crid://example.org/ep/1">
+        <BasicDescription>
+          <Title type="main"><![CDATA[Die Kochshow]]></Title>
+          <Title type="secondary"><![CDATA[Folge 1]]></Title>
+        </BasicDescription>
+      </ProgramInformation>
+    </ProgramInformationTable>
+    <GroupInformationTable>
+      <GroupInformation groupId="crid://example.org/more-episodes/results" ordered="true" numOfItems="64">
+        <GroupType xsi:type="ProgramGroupTypeType" value="otherCollection"/>
+        <BasicDescription>
+          <RelatedMaterial>
+            <HowRelated href="urn:fvc:metadata:cs:HowRelatedCS:2015-12:pagination:next"/>
+            <MediaLocator><MediaUri>https://epg.example.org/more/?pid=crid%3A%2F%2Fexample.org%2Fep%2F2&amp;type=ondemand&amp;page=1</MediaUri></MediaLocator>
+          </RelatedMaterial>
+          <RelatedMaterial>
+            <HowRelated href="urn:fvc:metadata:cs:HowRelatedCS:2015-12:pagination:last"/>
+            <MediaLocator><MediaUri>https://epg.example.org/more/?pid=crid%3A%2F%2Fexample.org%2Fep%2F2&amp;type=ondemand&amp;page=2</MediaUri></MediaLocator>
+          </RelatedMaterial>
+        </BasicDescription>
+      </GroupInformation>
+    </GroupInformationTable>
+    <ProgramLocationTable>
+      <OnDemandProgram serviceIDRef="svc">
+        <Program crid="crid://example.org/ep/2"/>
+        <ProgramURL contentType="application/vnd.dvb.ait+xml">https://apps.example.org/aitx?crid=crid://example.org/ep/2</ProgramURL>
+        <EndOfAvailability>2027-07-24T14:15:00Z</EndOfAvailability>
+        <Free value="true"/>
+      </OnDemandProgram>
+    </ProgramLocationTable>
+  </ProgramDescription>
+</TVAMain>

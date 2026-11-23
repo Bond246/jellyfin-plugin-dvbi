@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+.idea/
+artifacts/
+
+# Standards and schemas are copyrighted by their publishers (ETSI, DVB Project, ISO/IEC).
+# Keep local copies in docs/ for development, but do not commit them.
+docs/*.pdf
+docs/schemas/
+docs/txt/
+# Editor settings
+.vscode/

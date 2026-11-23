@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic TV-Anytime schedule response with the structure of German content guide servers. -->
+<TVAMain xmlns="urn:tva:metadata:2024" xmlns:mpeg7="urn:tva:mpeg7:2008" xml:lang="de">
+  <ProgramDescription>
+    <ProgramInformationTable>
+      <ProgramInformation programId="crid://example.org/news">
+        <BasicDescription>
+          <Title type="main">Tagesschau</Title>
+          <Synopsis length="short">Nachrichten</Synopsis>
+          <Synopsis length="medium">Die Nachrichten des Tages</Synopsis>
+          <Genre href="urn:dvb:metadata:cs:ContentSubject:2019:2.1" type="main"/>
+          <RelatedMaterial>
+            <HowRelated href="urn:tva:metadata:cs:HowRelatedCS:2012:19"/>
+            <MediaLocator><MediaUri contentType="image/jpeg">https://img.example.org/news.jpg</MediaUri></MediaLocator>
+          </RelatedMaterial>
+        </BasicDescription>
+      </ProgramInformation>
+      <ProgramInformation programId="crid://example.org/crime-99">
+        <BasicDescription>
+          <Title type="main">Morden im Norden (99)</Title>
+          <Title type="secondary">Aus gutem Hause</Title>
+          <Synopsis length="medium"><![CDATA[Ein Fall für die Kommissare.]]></Synopsis>
+          <Genre href="urn:dvb:metadata:cs:ContentSubject:2019:1.1"/>
+          <ParentalGuidance><mpeg7:MinimumAge>12</mpeg7:MinimumAge><mpeg7:Region>DE</mpeg7:Region></ParentalGuidance>
+        </BasicDescription>
+      </ProgramInformation>
+      <ProgramInformation programId="crid://example.org/movie">
+        <BasicDescription>
+          <Title type="main">Der große Film</Title>
+          <Synopsis length="medium">Ein Spielfilm.</Synopsis>
+          <Genre href="urn:dvb:metadata:cs:ContentSubject:2019:1.4" type="main"/>
+          <Genre href="urn:fvc:metadata:cs:MediaAvailabilityCS:2014-07:media_available" type="other"/>
+          <ParentalGuidance><mpeg7:MinimumAge>16</mpeg7:MinimumAge></ParentalGuidance>
+        </BasicDescription>
+      </ProgramInformation>
+      <ProgramInformation programId="crid://example.org/kids">
+        <BasicDescription>
+          <Title type="main">Sendung für Kinder</Title>
+          <Genre href="urn:dvb:metadata:cs:ContentSubject:2019:5" type="main"/>
+        </BasicDescription>
+      </ProgramInformation>
+    </ProgramInformationTable>
+    <ProgramLocationTable>
+      <Schedule serviceIDRef="epg-one" start="2026-11-23T18:00:00Z" end="2026-11-24T06:00:00Z">
+        <ScheduleEvent>
+          <Program crid="crid://example.org/news"/>
+          <InstanceDescription>
+            <AVAttributes>
+              <AudioAttributes><AudioLanguage purpose="urn:tva:metadata:cs:AudioPurposeCS:2007:6">de</AudioLanguage></AudioAttributes>
+              <VideoAttributes><HorizontalSize>1920</HorizontalSize><VerticalSize>1080</VerticalSize></VideoAttributes>
+              <AccessibilityAttributes>
+                <SubtitleAttributes><SubtitleLanguage>de</SubtitleLanguage></SubtitleAttributes>
+                <SigningAttributes/>
+              </AccessibilityAttributes>
+            </AVAttributes>
+          </InstanceDescription>
+          <PublishedStartTime>2026-11-23T19:00:00Z</PublishedStartTime>
+          <PublishedDuration>PT15M</PublishedDuration>
+        </ScheduleEvent>
+        <ScheduleEvent>
+          <Program crid="crid://example.org/crime-99"/>
+          <InstanceDescription>
+            <AVAttributes>
+              <AudioAttributes><AudioLanguage purpose="urn:tva:metadata:cs:AudioPurposeCS:2007:1">de</AudioLanguage></AudioAttributes>
+              <VideoAttributes><VerticalSize>576</VerticalSize></VideoAttributes>
+            </AVAttributes>
+          </InstanceDescription>
+          <PublishedStartTime>2026-11-23T19:15:00Z</PublishedStartTime>
+          <PublishedDuration>PT45M</PublishedDuration>
+        </ScheduleEvent>
+        <ScheduleEvent>
+          <Program crid="crid://example.org/movie"/>
+          <PublishedStartTime>2026-11-23T20:00:00Z</PublishedStartTime>
+          <PublishedDuration>PT1H30M</PublishedDuration>
+        </ScheduleEvent>
+        <ScheduleEvent>
+          <Program crid="crid://example.org/kids"/>
+          <PublishedStartTime>2026-11-23T21:30:00+01:00</PublishedStartTime>
+          <PublishedDuration>PT30M</PublishedDuration>
+        </ScheduleEvent>
+        <ScheduleEvent>
+          <Program crid="crid://example.org/unknown"/>
+          <InstanceDescription><Title type="epgevent">Nur Instanztitel</Title></InstanceDescription>
+          <PublishedStartTime>2026-11-23T22:00:00Z</PublishedStartTime>
+          <PublishedDuration>PT10M</PublishedDuration>
+        </ScheduleEvent>
+        <ScheduleEvent>
+          <Program crid="crid://example.org/broken"/>
+          <PublishedStartTime>not a date</PublishedStartTime>
+          <PublishedDuration>PT10M</PublishedDuration>
+        </ScheduleEvent>
+      </Schedule>
+      <OnDemandProgram serviceIDRef="epg-one">
+        <Program crid="crid://example.org/crime-99"/>
+        <ProgramURL contentType="application/vnd.dvb.ait+xml">https://apps.example.org/vod.xait?id=99&amp;x=1</ProgramURL>
+        <AuxiliaryURL contentType="application/vnd.dvb.ait+xml">https://apps.example.org/vod.xait</AuxiliaryURL>
+        <PublishedDuration>PT45M</PublishedDuration>
+        <StartOfAvailability>2026-11-20T04:30:06Z</StartOfAvailability>
+        <EndOfAvailability>2027-11-23T14:09:00Z</EndOfAvailability>
+        <DeliveryMode>streaming</DeliveryMode>
+        <Free value="true"/>
+      </OnDemandProgram>
+    </ProgramLocationTable>
+  </ProgramDescription>
+</TVAMain>

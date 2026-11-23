@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Check that the tag matches build.yaml
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VERSION=$(grep -oP '^version:\s*"\K[^"]+' build.yaml)
+          if [ "$VERSION" != "$TAG" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match version $VERSION in build.yaml" >&2
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Test
+        run: dotnet test -c Release
+
+      - name: Build and package
+        run: |
+          dotnet publish Jellyfin.Plugin.DvbI/Jellyfin.Plugin.DvbI.csproj -c Release -o publish
+          mkdir package
+          cp publish/Jellyfin.Plugin.DvbI.dll images/logo.png package/
+          ZIP="dvb-i_${VERSION}.zip"
+          (cd package && zip -q "../$ZIP" ./*)
+          echo "ZIP=$ZIP" >> "$GITHUB_ENV"
+          echo "CHECKSUM=$(md5sum "$ZIP" | cut -d' ' -f1)" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES=$(python3 -c 'import sys; sys.path.insert(0, "tools"); import update_manifest as m; print(m.read_build_yaml("build.yaml").get("changelog", ""))')
+          gh release create "$GITHUB_REF_NAME" "$ZIP" --title "DVB-I $VERSION" --notes "$NOTES"
+
+      - name: Add the release to manifest.json
+        run: |
+          git fetch origin main
+          git checkout main
+          python3 tools/update_manifest.py manifest.json build.yaml "$VERSION" \
+            "https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/${ZIP}" \
+            "$CHECKSUM" "$GITHUB_REPOSITORY"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json
+          git commit -m "Add version $VERSION to manifest.json"
+          git push origin main
